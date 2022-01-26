@@ -58,7 +58,8 @@ RUN touch /usr/local/etc/php/conf.d/docker-php-ext-OPcache.ini &&  \
     echo "# 其他php配置" >> /usr/local/etc/php/conf.d/docker-php-ext-OPcache.ini && \
     echo "memory_limit=256M" >> /usr/local/etc/php/conf.d/docker-php-ext-OPcache.ini && \
     echo "upload_max_filesize=50M" >> /usr/local/etc/php/conf.d/docker-php-ext-OPcache.ini && \
-    echo "post_max_size=50M" >> /usr/local/etc/php/conf.d/docker-php-ext-OPcache.ini
+    echo "post_max_size=50M" >> /usr/local/etc/php/conf.d/docker-php-ext-OPcache.ini && \
+    echo "expose_php=Off" >> /usr/local/etc/php/conf.d/docker-php-ext-OPcache.ini
 
 # Composer安装 与设置镜像地址
 RUN curl -sS https://getcomposer.org/installer | php \

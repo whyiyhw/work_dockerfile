@@ -57,7 +57,8 @@ RUN touch /usr/local/etc/php/conf.d/docker-php-ext-OPcache.ini &&  \
     echo "# 其他php配置" >> /usr/local/etc/php/conf.d/docker-php-ext-OPcache.ini && \
     echo "memory_limit=256M" >> /usr/local/etc/php/conf.d/docker-php-ext-OPcache.ini && \
     echo "upload_max_filesize=50M" >> /usr/local/etc/php/conf.d/docker-php-ext-OPcache.ini && \
-    echo "post_max_size=50M" >> /usr/local/etc/php/conf.d/docker-php-ext-OPcache.ini
+    echo "post_max_size=50M" >> /usr/local/etc/php/conf.d/docker-php-ext-OPcache.ini && \
+    echo "expose_php=Off" >> /usr/local/etc/php/conf.d/docker-php-ext-OPcache.ini
 
 # 更改 fpm 的分组 因为我 宿主机有 www:x:1001:1001 分组跟用户 所以才做这样的处理 其他机器按照自己想要的分组去处理就好
 # groupadd -g 1001 www
