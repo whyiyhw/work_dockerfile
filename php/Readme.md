@@ -10,23 +10,14 @@ docker build -t php81-laravel:v1 .
 docker run -i -t -d \
  --restart=always --privileged=true \
  -p 8100:9000 \
- -v /pathto/code:/var/www/html  --name=laravel8  php81-laravel:v1
+ -v /pathto/code:/pathto/code  --name=laravel8  php81-laravel:v1
 Copy
 ```
 
 ### 内外文件路径不一致的问题
 
-- 容器内一般默认的挂载路径为 `/var/www/html`
-- 容器外的代码就不好说了
-
-```
-# 解决方式就是 在容器内 建立与外部一致的路径
-mkdir -p /pathto/code 
-
-# 不然就只能在nginx 修改配置
-fastcgi_param SCRIPT_FILENAME $realpath_root $fastcgi_script_name;
-# $realpath_root 修改为 /pathto/code 
-```
+- 容器内一般默认路径为 `/var/www/html` 
+- 可以在容器内挂载与外部一致的路径
 
 ### 容器内 php.ini 中配置的修改
 
@@ -65,7 +56,7 @@ Copy
 
 ### laravel 相关任务
 
-```
+```shell
 # 可以直接在宿主机上 执行 容器内的命令 如
 # 将容器内的 composer 进行更新
 docker exec composer update -vvv 
@@ -77,3 +68,7 @@ crontab -e
 
 * * * * *  docker exec laravel8 sudo -u www php artisan schedule:run
 ```
+
+## 生产环境使用的第二个思路
+
+- 前期将所有使用的 `composer` 包通过 `composer.lock` 都拉下来，与项目的基础框架文件打成一个包，后续更新就是把 工程文件，更新到容器中进行替换。这个模式不错后续可以实践下~
