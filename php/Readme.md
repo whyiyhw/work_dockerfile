@@ -1,27 +1,45 @@
 ### 构建镜像
 
-```
+```shell
 docker build -t php81-laravel:v1 .
 ```
 
 ### 构建运行时
 
-```
+```shell
 docker run -i -t -d \
  --restart=always --privileged=true \
  -p 8100:9000 \
+<<<<<<< HEAD
  -v /pathto/code:/pathto/code  --name=laravel8  php81-laravel:v1
 Copy
+=======
+ -v /pathto/code:/var/www/html  --name=laravel8  php81-laravel:v1
+>>>>>>> 4d9363f82a093dae8f1d574633205eda5ba2ff93
 ```
 
 ### 内外文件路径不一致的问题
 
+<<<<<<< HEAD
 - 容器内一般默认路径为 `/var/www/html` 
 - 可以在容器内挂载与外部一致的路径
+=======
+- 容器内一般默认的挂载路径为 `/var/www/html`
+- 容器外的代码就不好说了
+
+```shell
+# 解决方式就是 在容器内 建立与外部一致的路径
+mkdir -p /pathto/code 
+
+# 不然就只能在nginx 修改配置
+fastcgi_param SCRIPT_FILENAME $realpath_root $fastcgi_script_name;
+# $realpath_root 修改为 /pathto/code 
+```
+>>>>>>> 4d9363f82a093dae8f1d574633205eda5ba2ff93
 
 ### 容器内 php.ini 中配置的修改
 
-```
+```shell
 # 因为php.ini 默认会去加载 /usr/local/etc/php/conf.d/*.ini 文件
 # 所以只需要 新增一个新的配置文件，默认就会将配置覆盖
 touch /usr/local/etc/php/conf.d/docker-php-ext-OPcache.ini
@@ -37,11 +55,10 @@ echo "post_max_size=50M" >> /usr/local/etc/php/conf.d/docker-php-ext-OPcache.ini
 
 - 在容器内 `php-fpm` 的运行时分组 为 `www-data`
 
-```
+```shell
 # 容器内
 id  www-data 
-uid=33(www-data) gid=33(www-data) groups=33(www-data)
-Copy
+# uid=33(www-data) gid=33(www-data) groups=33(www-data)
 ```
 
 - 所以其生成的 log 文件也是 属于这个分组下
@@ -49,7 +66,7 @@ Copy
 - 如若在宿主机上使用 crontab 势必会导致 log 权限的问题，
 - 解决方式 就是保证内外用户uid 的一致 如:
 
-```
+```shell
 RUN  useradd -u 1001 www && RUN sed -i "s/www-data/www/g" /usr/local/etc/php-fpm.d/www.conf
 Copy
 ```

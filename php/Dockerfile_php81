@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 FROM php:8.1.8-fpm
+=======
+FROM php:8.1-fpm
+>>>>>>> 4d9363f82a093dae8f1d574633205eda5ba2ff93
 
 ENV REDIS_VERSION=5.3.5  SWOOLE_VERSION=4.8.6 XLSWRITER_VERSION=1.5.1 IMAGICK_VERSION=3.7.0  
 
@@ -25,6 +29,7 @@ RUN apt-get update &&\
 # imagick extension  
 RUN apt-get -y install libmagickwand-dev && pecl install imagick-$IMAGICK_VERSION && docker-php-ext-enable imagick  
 
+<<<<<<< HEAD
 # xlswriter extension  
 RUN pecl install xlswriter-$XLSWRITER_VERSION && docker-php-ext-enable xlswriter  
 
@@ -86,4 +91,47 @@ RUN sed -i "s/;log_level = notice/log_level = debug/g" /usr/local/etc/php-fpm.co
     echo "slowlog = /proc/self/fd/2" >> /usr/local/etc/php-fpm.d/www.conf
 
 
+=======
+#安装其他必需扩展
+RUN docker-php-ext-install bcmath pdo_mysql zip sockets pcntl exif
 
+#安装swoole
+#RUN pecl install swoole-$SWOOLE_VERSION && docker-php-ext-enable swoole
+
+# Composer安装 与设置镜像地址
+RUN curl -sS https://getcomposer.org/installer | php \
+    && mv composer.phar /usr/local/bin/composer \
+    && composer self-update --clean-backups \
+    && composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
+
+# php-OPcache 配置
+RUN touch /usr/local/etc/php/conf.d/docker-php-ext-OPcache.ini &&  \
+    echo "[opcache]" >> /usr/local/etc/php/conf.d/docker-php-ext-OPcache.ini && \
+    echo "zend_extension=opcache.so" >> /usr/local/etc/php/conf.d/docker-php-ext-OPcache.ini && \
+    echo "opcache.enable=1" >> /usr/local/etc/php/conf.d/docker-php-ext-OPcache.ini && \
+    echo "opcache.enable_cli=1" >> /usr/local/etc/php/conf.d/docker-php-ext-OPcache.ini && \
+    echo "opcache.memory_consumption=256" >> /usr/local/etc/php/conf.d/docker-php-ext-OPcache.ini && \
+    echo "opcache.interned_strings_buffer=8" >> /usr/local/etc/php/conf.d/docker-php-ext-OPcache.ini && \
+    echo "opcache.max_accelerated_files=100000" >> /usr/local/etc/php/conf.d/docker-php-ext-OPcache.ini && \
+    echo "opcache.max_wasted_percentage=5" >> /usr/local/etc/php/conf.d/docker-php-ext-OPcache.ini && \
+    echo "opcache.use_cwd=1" >> /usr/local/etc/php/conf.d/docker-php-ext-OPcache.ini && \
+    echo "opcache.validate_timestamps=1" >> /usr/local/etc/php/conf.d/docker-php-ext-OPcache.ini && \
+    echo "opcache.revalidate_freq=2" >> /usr/local/etc/php/conf.d/docker-php-ext-OPcache.ini && \
+    echo "opcache.save_comments=0" >> /usr/local/etc/php/conf.d/docker-php-ext-OPcache.ini && \
+    echo "opcache.jit_debug=0" >> /usr/local/etc/php/conf.d/docker-php-ext-OPcache.ini && \
+    echo "opcache.jit=1255" >> /usr/local/etc/php/conf.d/docker-php-ext-OPcache.ini && \
+    echo "opcache.jit_buffer_size=256M" >> /usr/local/etc/php/conf.d/docker-php-ext-OPcache.ini && \
+    echo "# 其他php配置" >> /usr/local/etc/php/conf.d/docker-php-ext-OPcache.ini && \
+    echo "memory_limit=256M" >> /usr/local/etc/php/conf.d/docker-php-ext-OPcache.ini && \
+    echo "upload_max_filesize=50M" >> /usr/local/etc/php/conf.d/docker-php-ext-OPcache.ini && \
+    echo "post_max_size=50M" >> /usr/local/etc/php/conf.d/docker-php-ext-OPcache.ini && \
+    echo "expose_php=Off" >> /usr/local/etc/php/conf.d/docker-php-ext-OPcache.ini
+
+# 更改 fpm 的分组 因为我 宿主机有 www:x:1001:1001 分组跟用户 所以才做这样的处理 其他机器按照自己想要的分组去处理就好
+# groupadd -g 1001 www
+RUN  useradd -u 1001 www && RUN sed -i "s/www-data/www/g" /usr/local/etc/php-fpm.d/www.conf
+>>>>>>> 4d9363f82a093dae8f1d574633205eda5ba2ff93
+
+CMD docker-php-entrypoint php-fpm
+
+EXPOSE 9000
