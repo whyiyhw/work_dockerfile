@@ -10,32 +10,14 @@ docker build -t php81-laravel:v1 .
 docker run -i -t -d \
  --restart=always --privileged=true \
  -p 8100:9000 \
-<<<<<<< HEAD
  -v /pathto/code:/pathto/code  --name=laravel8  php81-laravel:v1
 Copy
-=======
- -v /pathto/code:/var/www/html  --name=laravel8  php81-laravel:v1
->>>>>>> 4d9363f82a093dae8f1d574633205eda5ba2ff93
 ```
 
 ### 内外文件路径不一致的问题
 
-<<<<<<< HEAD
 - 容器内一般默认路径为 `/var/www/html` 
 - 可以在容器内挂载与外部一致的路径
-=======
-- 容器内一般默认的挂载路径为 `/var/www/html`
-- 容器外的代码就不好说了
-
-```shell
-# 解决方式就是 在容器内 建立与外部一致的路径
-mkdir -p /pathto/code 
-
-# 不然就只能在nginx 修改配置
-fastcgi_param SCRIPT_FILENAME $realpath_root $fastcgi_script_name;
-# $realpath_root 修改为 /pathto/code 
-```
->>>>>>> 4d9363f82a093dae8f1d574633205eda5ba2ff93
 
 ### 容器内 php.ini 中配置的修改
 
